@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #eee; }
+        input, button { margin: 5px; padding: 6px; }
+    </style>
+</head>
+<body>
+    <h2>User Management</h2>
+    
+    <form method="POST" action="{{ url_for('add_user') }}">
+        <input name="email" placeholder="New Email" required>
+        <input name="password" placeholder="Password" required>
+        <button type="submit">➕ Add User</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Email</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <form style="display:inline;" method="POST" action="{{ url_for('delete_user', user_id=user.id) }}">
+                            <button type="submit">🗑️ Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+</body>
+</html>

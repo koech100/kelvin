@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minimal Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="#" onclick="show('home')">🏠 Home</a>
+    <a href="#" onclick="show('products')">🛍️ Products</a>
+    <a href="#" onclick="show('cart')">🛒 Cart</a>
+    <a href="#" onclick="show('about')">📄 About</a>
+    <a href="{{ url_for('logout') }}">🚪 Logout</a>
+  </nav>
+
+  <div class="container">
+    <div id="home" class="page">
+      <h1>🚀 Build, Scale & Succeed With Tech</h1>
+      <p>
+        <strong>Hey You, 👋</strong> I’m a software developer and tech entrepreneur passionate about helping businesses streamline operations and grow using smart technology.
+        <br><br>
+        🔹 Need a <strong>sleek website</strong> or a <strong>high-converting eCommerce store</strong>? I’ve got you.<br>
+        🔹 Running a business? Let’s set you up with a <strong>POS & inventory system</strong> that handles your stock, sales, and reports.<br>
+        🔹 Want seamless payment & automation? I connect it all for <strong>smooth operations</strong>.<br>
+        🔹 Looking to scale? Let’s launch a <strong>SaaS solution</strong> that brings in monthly revenue.
+        <br><br>
+        <em>I build with precision so you can focus on growth. Let’s talk and make your vision real.</em>
+      </p>
+    </div>
+
+    <div id="products" class="page hidden">
+      <h2>GOODS $ SERVICES</h2>
+      <div class="grid">
+        {% for product in products %}
+        <div class="product" id="product-{{ loop.index }}">
+          <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}">
+          <h3>{{ product.name }}</h3>
+          <p>$ {{ product.price }}</p>
+          <button onclick="addToCart('{{ product.name }}', {{ product.price }}, this)">Add to Cart</button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+   <div id="cart" class="page hidden">
+  <h2>Your Cart</h2>
+  <div id="cart-items"></div>
+  <p id="cart-total"><strong>Total:</strong> $0</p>
+  
+  <!-- PayPal checkout form -->
+  <form action="https://www.paypal.com/ncp/payment/AHSV48VYXRUME" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+    <input class="pp-L34TZ2PPLTHPU" type="submit" value="CHECKOUT" />
+    <img src="https://www.paypalobjects.com/images/Debit_Credit.svg" alt="cards" />
+  </form>
+
+  <!-- New Email button -->
+  <button onclick="emailCartItems()">Email Cart Items</button>
+</div>
+
+<script>
+  // Cart items array to store the names and prices of items added to the cart
+  let cartItems = [];
+  
+  // Function to add items to the cart
+  function addToCart(name, price, button) {
+    cartItems.push({ name: name, price: price });
+    updateCart();
+  }
+
+  // Update cart display with item names and total price
+  function updateCart() {
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartTotalDiv = document.getElementById('cart-total');
+    
+    cartItemsDiv.innerHTML = '';  // Clear current cart items display
+    let total = 0;
+    
+    cartItems.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.textContent = `${item.name} - $${item.price}`;
+      cartItemsDiv.appendChild(itemDiv);
+      total += item.price;
+    });
+
+    cartTotalDiv.innerHTML = `<strong>Total:</strong> $${total}`;
+  }
+
+  // Function to create and open a mailto link with the cart items
+  function emailCartItems() {
+    if (cartItems.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    
+    let emailBody = "Here are the items in my cart:\n\n";
+    cartItems.forEach(item => {
+      emailBody += `${item.name} - $${item.price}\n`;
+    });
+
+    // Encode the email subject and body to make it URL-friendly
+    const subject = encodeURIComponent('Cart Items');
+    const body = encodeURIComponent(emailBody);
+    
+    // Open Gmail with pre-filled email content
+    window.location.href = `mailto:young111doodle@gmail.com?subject=${subject}&body=${body}`;
+  }
+</script>
+
+    </div>
+
+    <div id="about" class="page hidden">
+      <h2>About Us</h2>
+      <p>We are a small team building lightweight, privacy-friendly eCommerce solutions.</p>
+    </div>
+  </div>
+
+  <footer>
+    
+    <div>© <span id="year"></span> Minimal Store. All rights reserved.</div>
+    <div class="socials">
+    <br></br>
+      <a href="#">🐦 Twitter</a>
+      <br></br>
+      <a href="#">📘 Facebook</a>
+      <br></br>
+      <a href="#">📸 Instagram</a>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
+
